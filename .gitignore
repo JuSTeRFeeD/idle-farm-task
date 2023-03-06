@@ -9,6 +9,8 @@ Assets/Plugins/Editor/JetBrains*
 # Visual Studio Code
 .vscode/
 
+# Unity Recordings
+[Rr]ecordings/
 
 ### Unity ###
 [Ll]ibrary/
