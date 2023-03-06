@@ -1,0 +1,17 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f0478ba2da8fe3b41b0d5843415477c9, type: 3}
+  m_Name: Grass
+  m_EditorClassIdentifier: 
+  stackPrefab: {fileID: 6329384194587127169, guid: 6873367372f124746ab14fcadca2746c, type: 3}
+  title: Grass
+  costPerStackItem: 15

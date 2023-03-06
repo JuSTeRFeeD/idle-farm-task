@@ -23,7 +23,7 @@ MonoBehaviour:
   rewindCallbackMode: 0
   showUnityEditorReport: 0
   logBehaviour: 0
-  drawGizmos: 1
+  drawGizmos: 0
   defaultRecyclable: 0
   defaultAutoPlay: 3
   defaultUpdateType: 0

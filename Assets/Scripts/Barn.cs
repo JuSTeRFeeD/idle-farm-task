@@ -28,10 +28,10 @@ public class Barn : MonoBehaviour
             var rndInCircle = Random.insideUnitCircle;
             var toSellPos = sellPoint.position + new Vector3(rndInCircle.x, 0, rndInCircle.y);
             DOTween.Sequence()
-                .Append(item.transform.DOMove(toSellPos, 0.3f))
+                .Append(item.transform.DOJump(toSellPos, 2f, 1, 0.3f))
                 .AppendCallback(() =>
                 {
-                    CoinsDisplayUI.Instance.CollectCoin(sellPoint.position, 15);
+                    CoinsDisplayUI.Instance.CollectCoin(sellPoint.position, item.PlantData.costPerStackItem);
                     Destroy(item.gameObject); // TODO: pool objects
                 });
             yield return delay;

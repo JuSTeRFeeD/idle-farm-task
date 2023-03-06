@@ -1,28 +1,35 @@
+using System;
 using Player;
+using Scriptable;
 using UnityEngine;
-using UnityEngine.Events;
+using Utils;
 
 public class Plant : MonoBehaviour
 {
+    [SerializeField] private ParticleSystem cutOffParticle;
     [SerializeField] private Collider triggerCollider;
 
-    private int plantIndex;
+    private Vector2Int plantPos;
     private bool isCollected;
     private bool isCuttedOff;
     
-    public UnityAction<int> OnPickup;
+    public event Action<Vector2Int> OnPickup;
+    public PlantData PlantData { get; private set; }
+    
 
-    public void Setup(int index)
+    public void Setup(Vector2Int cellPos, PlantData plantData)
     {
-        plantIndex = index;
+        Instantiate(plantData.stackPrefab, transform.position, Quaternion.identity, transform);
+        PlantData = plantData;
+        plantPos = cellPos;
     }
 
-    private void OnTriggerEnter(Collider other)
+    public void Pickup(PlayerBackpack backpack)
     {
-        if (!isCuttedOff || isCollected || !other.CompareTag("Player")) return;
-        if (!other.TryGetComponent(out PlayerBackpack backpack) || !backpack.AddItem(this)) return;
+        if (!isCuttedOff || isCollected) return;
+        if (!backpack.AddItem(this)) return;
         isCollected = true;
-        OnPickup?.Invoke(plantIndex);
+        OnPickup?.Invoke(plantPos);
         OnPickup = null;
         triggerCollider.enabled = false;
     }
@@ -31,5 +38,7 @@ public class Plant : MonoBehaviour
     {
         if (isCuttedOff) return;
         isCuttedOff = true;
+        cutOffParticle.Play();
+        transform.DoJumpRandomInCircle();
     }
 }

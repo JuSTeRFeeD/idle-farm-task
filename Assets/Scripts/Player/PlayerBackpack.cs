@@ -4,29 +4,32 @@ using UnityEngine;
 
 namespace Player
 {
-    [RequireComponent(typeof(PlayerController))]
     public class PlayerBackpack : MonoBehaviour
     {
+        [SerializeField] private PlayerController playerController;
         [SerializeField, Tooltip("From this position plants will be display behind player")] 
         private Transform backpackStackContainer;
 
-        private PlayerController playerController;
-
-        [SerializeField] private float plantStackHeight = 0.2f;
         [field: SerializeField] public int StackSize { get; private set; } = 40;
         public int CurrentCollectedCount { get; private set; }
         public bool HasItems => CurrentCollectedCount > 0;
+        public bool IsFull => CurrentCollectedCount >= StackSize;
         public Plant[] CollectedPlants { get; private set; }
-        
-        [Space]
+
+        [Header("Pickup")] 
+        [SerializeField] private float pickupDistance = 2f; 
+        [SerializeField] private float distanceBetweenItems = 0.2f;
+        [SerializeField] private float pickupTime = 1f;
+        [SerializeField] private float pickedScale = 0.3f;
+        [Header("Wiggle")]
         [SerializeField] private float wiggleDistance = 0.4f;
         [SerializeField] private float wiggleSpeed = 10;
         
         public event Action OnCollectedChange;
+        public event Action OnBackpackFull;
 
         private void Start()
         {
-            playerController = GetComponent<PlayerController>();
             CollectedPlants = new Plant[StackSize];
         }
 
@@ -46,6 +49,25 @@ namespace Player
             }
         }
 
+        private Collider[] collidedPlants = new Collider[10];
+        private void FixedUpdate()
+        {
+            var count = Physics.OverlapSphereNonAlloc(transform.position, pickupDistance, collidedPlants);
+            for (var i = 0; i < count; i++)
+            {
+                if (collidedPlants[i].TryGetComponent(out Plant plant))
+                {
+                    plant.Pickup(this);
+                }
+            }
+        }
+
+        private void OnDrawGizmos()
+        {
+            Gizmos.color = Color.yellow;
+            Gizmos.DrawWireSphere(transform.position, pickupDistance);
+        }
+
         /// <returns>True - item was added</returns>
         public bool AddItem(Plant plant)
         {
@@ -54,16 +76,23 @@ namespace Player
             var containerPos = backpackStackContainer.localPosition;
             var path = new Vector3[]
             {
-                containerPos + Vector3.up * 2f  + Vector3.up * plantStackHeight * CurrentCollectedCount,
-                containerPos + Vector3.up * plantStackHeight * CurrentCollectedCount
+                containerPos + Vector3.up + Vector3.up * (distanceBetweenItems * CurrentCollectedCount),
+                containerPos + Vector3.up * (distanceBetweenItems * CurrentCollectedCount)
             };
+            plant.transform.DOScale(pickedScale, pickupTime / 2);
             plant.transform.SetParent(backpackStackContainer);
-            plant.transform.DOLocalPath(path, 1f);
-            plant.transform.DOLocalRotate(Vector3.zero, 1f);
+            plant.transform.DOLocalPath(path, pickupTime);
+            plant.transform.DOLocalRotate(Vector3.zero, pickupTime);
             
             CollectedPlants[CurrentCollectedCount] = plant;
             CurrentCollectedCount++;
+
+            if (CurrentCollectedCount >= StackSize)
+            {
+                OnBackpackFull?.Invoke();
+            }
             OnCollectedChange?.Invoke();
+            
             return true;
         }
 
