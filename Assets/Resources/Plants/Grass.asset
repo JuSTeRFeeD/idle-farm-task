@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f0478ba2da8fe3b41b0d5843415477c9, type: 3}
   m_Name: Grass
   m_EditorClassIdentifier: 
-  stackPrefab: {fileID: 6329384194587127169, guid: 6873367372f124746ab14fcadca2746c, type: 3}
+  plantPrefab: {fileID: 6329384194587127169, guid: 6873367372f124746ab14fcadca2746c, type: 3}
+  stackMaterial: {fileID: 2100000, guid: 9547652fba4ee994fa28b66af3a935bc, type: 2}
   title: Grass
   costPerStackItem: 15

@@ -10,7 +10,7 @@ internal class PlantCell
 
 public class GardenBed : MonoBehaviour
 {
-    [SerializeField] private PlantData plantData;
+    [field:SerializeField] private PlantData plantData;
     [SerializeField] private Plant plantPrefab;
     [SerializeField] private float respawnTime = 10f;
     [Space]
