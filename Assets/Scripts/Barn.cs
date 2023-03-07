@@ -21,7 +21,6 @@ public class Barn : MonoBehaviour
 
     private IEnumerator SellItems(PlayerBackpack backpack)
     {
-        var delay = new WaitForSeconds(0.01f);
         while (backpack.HasItems)
         {
             var item = backpack.PopItem();
@@ -34,7 +33,7 @@ public class Barn : MonoBehaviour
                     CoinsDisplayUI.Instance.CollectCoin(sellPoint.position, item.PlantData.costPerStackItem);
                     Destroy(item.gameObject); // TODO: pool objects
                 });
-            yield return delay;
+            yield return null;
         }
     }
 }
