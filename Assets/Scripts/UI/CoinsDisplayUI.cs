@@ -4,6 +4,7 @@ using DG.Tweening;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using Utils;
 using Random = UnityEngine.Random;
 
 namespace UI
@@ -63,7 +64,7 @@ namespace UI
             playerInfo.AddCoins(animationEndedCoins);
         }
 
-        private void HandleCoinsChange() => coinsAmountText.text = playerInfo.Coins.ToString();
+        private void HandleCoinsChange() => coinsAmountText.text = StringExtras.FormatAmount(playerInfo.Coins);
 
         private Image AddCoinToPool()
         {
@@ -103,20 +104,47 @@ namespace UI
                     amountTweener.Restart();
                 });
         }
-        
+
         private void FixedUpdate()
         {
             if (animationEndedCoins <= 0) return;
+            
             // for adding bound instantly w/o waiting
-            for (var bound = 1000; bound > 10; bound /= 10)
+            if (animationEndedCoins > StringExtras.FormatBound || playerInfo.Coins > StringExtras.FormatBound)
             {
-                if (animationEndedCoins < bound) continue;
-                playerInfo.AddCoins(bound);
-                animationEndedCoins -= bound;
-                return;
+                for (var bound = 10000000; bound > StringExtras.FormatBound; bound /= 1000)
+                {
+                    if (animationEndedCoins < bound) continue;
+                    playerInfo.AddCoins(bound);
+                    animationEndedCoins -= bound;
+                    return;
+                }
+
+                playerInfo.AddCoins(animationEndedCoins);
+                animationEndedCoins = 0;
             }
-            playerInfo.AddCoins(1);
-            animationEndedCoins -= 1;
+            else
+            {
+                for (var bound = StringExtras.FormatBound; bound > 10; bound /= 10)
+                {
+                    if (animationEndedCoins < bound) continue;
+                    playerInfo.AddCoins(bound);
+                    animationEndedCoins -= bound;
+                    return;
+                }
+
+                playerInfo.AddCoins(1);
+                animationEndedCoins -= 1;
+            }
         }
+        
+#if DEBUG
+        private void Update() {
+            if (UnityEngine.Input.GetKeyDown(KeyCode.Alpha1)) CollectCoin(Vector3.zero, 123);
+            if (UnityEngine.Input.GetKeyDown(KeyCode.Alpha2)) CollectCoin(Vector3.zero, 1235);
+            if (UnityEngine.Input.GetKeyDown(KeyCode.Alpha3)) CollectCoin(Vector3.zero, 12356);
+            if (UnityEngine.Input.GetKeyDown(KeyCode.Alpha4)) CollectCoin(Vector3.zero, 123567);
+        }
+#endif
     }
 }
